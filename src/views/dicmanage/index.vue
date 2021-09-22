@@ -38,40 +38,16 @@
         </DataTree>
       </Card>
     </div>
-    <BaseDialog
-      ref="formDialog"
+    <DataFormDialog
       v-bind="dialog"
-      class="dic-dialog"
-      @close="
-        () => {
-          $refs.dataForm.refs().resetFields()
-          table.selected={}
-          dataFormKey++
-        }
-      "
+      :visible.sync="dialog.visible"
+      custom-class="dic-dialog"
+      @submit="handleSubmit"
     >
-      <DataForm
-        ref="dataForm"
-        :key="dataFormKey"
-        :forms="config.form.forms"
-        label-position="right"
-        :layout="config.form.layout"
-        :data="table.selected"
-      />
-      <template v-slot:footer>
-        <div class="footer">
-          <el-button @click="$refs.formDialog.close()">取消</el-button>
-          <el-button
-            type="primary"
-            @click="
-              () => {
-                handleSubmit()
-              }
-            "
-          >保存</el-button>
-        </div>
+      <template v-slot:title>
+        <div class="title">{{ dialog.title }}</div>
       </template>
-    </BaseDialog>
+    </DataFormDialog>
   </Card>
 </template>
 
@@ -80,7 +56,7 @@ import Card from '@/components/atoms/Card'
 import DataTree from '@/components/organisms/DataTree'
 import MenusCard from '@/vocationals/MenusCard'
 import BaseDialog from '@/components/molecules/BaseDialog.vue'
-import { DataForm } from 'lourd-components'
+import { DataForm, DataFormDialog } from 'lourd-components'
 import { serviceContainer } from '@/composables/context-provider'
 import config from './config'
 export const service = serviceContainer.dicmanageService
@@ -114,13 +90,16 @@ export default {
     MenusCard,
     DataForm,
     BaseDialog,
-    CreateCategoryButton
+    CreateCategoryButton,
+    DataFormDialog
   },
   data() {
     return {
       dialog: {
         mode: 'update',
-        title: '编辑用户'
+        title: '编辑用户',
+        visible: false,
+        form: config.form
       },
       dataFormKey: 1,
       config: config,
@@ -155,16 +134,17 @@ export default {
     },
     handleCreate() {
       this.table.selected = {}
+      this.$set(this.dialog.form, 'data', {})
       this.dialog.title = '新建字典值类型'
       this.dialog.mode = 'insert'
-      this.$refs.formDialog.open()
+      this.dialog.visible = true
     },
     handleUpdate(row) {
-      this.table.selected = {}
       this.table.selected = row
+      this.dialog.form.data = row
       this.dialog.mode = 'update'
       this.dialog.title = '编辑字典值类型'
-      this.$refs.formDialog.open()
+      this.dialog.visible = true
     },
     handleMenu(menu) {
       this.dicmanage.menus.current = menu.c_id
@@ -194,34 +174,34 @@ export default {
           })
         })
     },
-    handleSubmit() {
-      const form = this.$refs.dataForm.refs()
-      form.validate().then(() => {
-        const model = this.$refs.dataForm.model
-        switch (this.dialog.mode) {
+    handleSubmit({ validate, data, mode }) {
+      validate(valid => {
+        if (!valid) {
+          return
+        }
+        switch (mode) {
           case 'update':
             service
               .update({
-                ...model,
+                ...data,
                 c_id: this.c_id
               })
               .then(() => {
                 this.$message.success('编辑成功')
-                this.$refs.formDialog.close()
-
+                this.dialog.visible = false
                 this.treeData.refresh()
               })
             break
           case 'insert':
             service
               .insert({
-                ...model,
+                ...data,
                 c_id: this.c_id,
                 p_node_id: 0
               })
               .then(() => {
                 this.$message.success('新建成功')
-                this.$refs.formDialog.close()
+                this.dialog.visible = false
                 this.treeData.refresh()
               })
             break
@@ -258,6 +238,53 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.dic-dialog {
+  width: 500px;
+  .data-form .el-form-item__label {
+    width: 120px;
+  }
+  .el-dialog__header {
+    // height: 40px;
+    padding: 8px 16px;
+    text-align: left;
+    // background-color: rgba(242, 242, 242, 1);
+    .title {
+      padding: 20px;
+      text-align: center;
+      font-size: 18px;
+      color: #000000;
+      border-bottom: 1px solid #ccd3d9;
+    }
+    .el-dialog__title {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(56, 56, 56, 1);
+    }
+
+    .el-dialog__headerbtn {
+      top: 8px;
+      right: 8px;
+      font-size: 22px;
+      .el-dialog__close {
+        color: #ccd3d9;
+      }
+    }
+  }
+
+  .el-dialog__body {
+    padding: 8px 30px;
+    padding-bottom: 10px;
+  }
+  .el-dialog__footer {
+    display: flex;
+    justify-content: center;
+    .el-button--medium {
+      padding: 10px 32px;
+    }
+  }
+}
+</style>
 <style scoped lang="scss">
 .dicmanager-banner {
   display: flex;

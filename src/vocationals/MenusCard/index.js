@@ -15,7 +15,7 @@ export default ({ props, data, listeners }) => (
     </div>
     {props.list && (
       <el-menu
-        default-active={props.list.length && String(props.list[0][props.index])}
+        default-active={props.list.length ? String(props.list[0][props.index]) : '0'}
       >
         {props.list.map(item => (
           <el-menu-item
