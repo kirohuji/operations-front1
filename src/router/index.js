@@ -74,7 +74,35 @@ export const constantRoutes = [
         meta: { title: '字典管理', affix: false }
       }
     ]
-  }
+  },
+  {
+    path: '/person',
+    component: Layout,
+    name: 'person',
+    meta: {
+      title: '用户中心',
+      icon: 'iconfont icon-yonghuguanli-01',
+      code: 'user'
+    },
+    children: [
+      {
+        path: 'default',
+        redirect: 'roles'
+      },
+      // {
+      //   path: 'users',
+      //   component: () => import('@/views/users/index.vue'),
+      //   name: 'users',
+      //   meta: { title: '用户管理', affix: false, code: 'usermanage' }
+      // },
+      {
+        path: 'roles',
+        component: () => import('@/views/roles/index'),
+        name: 'roles',
+        meta: { title: '角色管理', affix: false, code: 'rolemanage' }
+      }
+    ]
+  },
 ]
 export const asyncRoutes = [
   // 404 page must be placed at the end !!!

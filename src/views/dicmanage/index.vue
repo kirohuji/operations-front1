@@ -55,8 +55,7 @@
 import Card from '@/components/atoms/Card'
 import DataTree from '@/components/organisms/DataTree'
 import MenusCard from '@/vocationals/MenusCard'
-import BaseDialog from '@/components/molecules/BaseDialog.vue'
-import { DataForm, DataFormDialog } from 'lourd-components'
+import { DataFormDialog } from 'lourd-components'
 import { serviceContainer } from '@/composables/context-provider'
 import config from './config'
 export const service = serviceContainer.dicmanageService
@@ -88,8 +87,6 @@ export default {
     Card,
     DataTree,
     MenusCard,
-    DataForm,
-    BaseDialog,
     CreateCategoryButton,
     DataFormDialog
   },

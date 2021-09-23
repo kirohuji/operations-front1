@@ -7,6 +7,7 @@ import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css
 import { BaseEnterProvider, ThenableProvider } from 'lourd-components'
+import BaseCascader from '@/components/molecules/BaseCascader/cascader/src/cascader'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -19,6 +20,7 @@ Vue.use(Element, {
   size: Cookies.get('size') || 'medium'
 })
 Vue.use(BaseEnterProvider)
+Vue.prototype.$baseComponents['base-cascader'] = BaseCascader
 Vue.use(ThenableProvider)
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
