@@ -32,8 +32,15 @@ export default {
             o_id: localStorage.getItem('selectedTab') - 1
           },
           immediate: true,
-          initData: function(data) {
-            debugger;
+          onAfter: function(data) {
+            // debugger
+            console.log('this.initialized', this.initialized)
+            // if (!this.initialized) {
+            //   this.$emit('input', data.length && [data[0].node_id])
+            // } else {
+            //   this.initialized = true
+            // }
+
             return data.length && [data[0].node_id]
           },
           callback: data => {
