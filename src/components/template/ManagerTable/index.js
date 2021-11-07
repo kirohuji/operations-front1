@@ -46,7 +46,7 @@ export default {
       <div class='manager-table'>
         <DataFormDialog
           ref='dialog'
-          custom-class='manager-dialog'
+          custom-class={`manager-dialog ${this.dialog?.class}`}
           {...{
             props: {
               ...this.dialog,
@@ -74,7 +74,7 @@ export default {
                   })
               },
               scopedSlots: {
-                right: () => (
+                right: () => this.store.searcher.create ? (
                   <Button
                     class='search-button'
                     type='primary'
@@ -83,7 +83,7 @@ export default {
                   >
                     {this.store.searcher.create || '新建'}
                   </Button>
-                )
+                ) : ''
               }
             }}
           />
@@ -99,6 +99,13 @@ export default {
               on: {
                 select: this.handleSelect,
                 'select-all': this.handleSelect,
+                change: () => {
+                  this.$emit('search', {
+                    ...this.store.searcher.data,
+                    limit: this.store.table.page.pageSize,
+                    page: this.store.table.page.currentPage
+                  })
+                },
                 ...this.$listeners
               },
               scopedSlots: this.$scopedSlots

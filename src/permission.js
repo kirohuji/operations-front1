@@ -10,7 +10,8 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
-router.beforeEach(async(to, from, next) => {
+router.beforeEach((to, from, next) => {
+  const code = to.query.code || localStorage.getItem('code')
   NProgress.start()
   document.title = getPageTitle(to.meta.title)
   const hasToken = localStorage.getItem('token')
@@ -22,27 +23,8 @@ router.beforeEach(async(to, from, next) => {
     } else {
       next()
       NProgress.done()
-      // const hasRoles = store.getters.roles && store.getters.roles.length > 0
-      // if (hasRoles) {
-      //   next()
-      // } else {
-      //   try {
-      //     // get user info
-      //     // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
-      //     const { roles } = await store.dispatch('user/getInfo')
-      //     const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
-      //     router.addRoutes(accessRoutes)
-      //     next({ ...to, replace: true })
-      //   } catch (error) {
-      //     await store.dispatch('user/resetToken')
-      //     Message.error(error || 'Has Error')
-      //     next(`/login?redirect=${to.path}`)
-      //     NProgress.done()
-      //   }
-      // }
     }
-  } else if (to.query.code || localStorage.getItem('code')) {
-    const code = to.query.code || localStorage.getItem('code')
+  } else if (code) {
     service
       .login({
         code

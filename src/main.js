@@ -8,6 +8,9 @@ import './styles/element-variables.scss'
 import '@/styles/index.scss' // global css
 import { BaseEnterProvider, ThenableProvider } from 'lourd-components'
 import BaseCascader from '@/components/molecules/BaseCascader/cascader/src/cascader'
+import BaseImport from '@/vocationals/BaseImport'
+import BaseImageUpload from '@/vocationals/BaseImageUpload'
+import BaseEditor from '@/components/molecules/BaseEditor'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -21,6 +24,9 @@ Vue.use(Element, {
 })
 Vue.use(BaseEnterProvider)
 Vue.prototype.$baseComponents['base-cascader'] = BaseCascader
+Vue.prototype.$baseComponents['import'] = BaseImport
+Vue.prototype.$baseComponents['image'] = BaseImageUpload
+Vue.prototype.$baseComponents['editor'] = BaseEditor
 Vue.use(ThenableProvider)
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

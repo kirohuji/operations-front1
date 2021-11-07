@@ -76,6 +76,55 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/information',
+    component: Layout,
+    name: 'information',
+    meta: {
+      title: '资讯中心',
+      icon: 'iconfont icon icon-zixunzhongxin-01',
+      code: 'infomanage'
+      //   code: 'user'
+    },
+    children: [
+      {
+        path: '/',
+        redirect: 'infomanage'
+      },
+      {
+        path: 'infomanage',
+        component: () => import('@/views/infomanage/index'),
+        name: 'infomanage',
+        meta: {
+          title: '资讯管理',
+          affix: false,
+          code: 'infomanage'
+        }
+      },
+      {
+        path: 'infomanage/create/:id(\\d+)',
+        component: () => import('@/views/infomanage/form'),
+        name: 'infomanage_create',
+        meta: {
+          title: '新建资讯',
+          noCache: true,
+          activeMenu: '/information/default'
+        },
+        hidden: true
+      },
+      {
+        path: 'infomanage/edit/:id(\\d+)',
+        component: () => import('@/views/infomanage/form'),
+        name: 'infomanage_create',
+        meta: {
+          title: '编辑资讯',
+          noCache: true,
+          activeMenu: '/information/default'
+        },
+        hidden: true
+      }
+    ]
+  },
+  {
     path: '/person',
     component: Layout,
     name: 'person',
@@ -89,12 +138,12 @@ export const constantRoutes = [
         path: 'default',
         redirect: 'roles'
       },
-      // {
-      //   path: 'users',
-      //   component: () => import('@/views/users/index.vue'),
-      //   name: 'users',
-      //   meta: { title: '用户管理', affix: false, code: 'usermanage' }
-      // },
+      {
+        path: 'users',
+        component: () => import('@/views/users/index.vue'),
+        name: 'users',
+        meta: { title: '用户管理', affix: false, code: 'usermanage' }
+      },
       {
         path: 'roles',
         component: () => import('@/views/roles/index'),
@@ -102,7 +151,7 @@ export const constantRoutes = [
         meta: { title: '角色管理', affix: false, code: 'rolemanage' }
       }
     ]
-  },
+  }
 ]
 export const asyncRoutes = [
   // 404 page must be placed at the end !!!

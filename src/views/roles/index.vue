@@ -4,6 +4,8 @@
       :key="typeKey"
       :store="store"
       :dialog="dialog"
+      :data="table.data"
+      :total="table.total"
       @submit="handleSubmit"
       @create="handleCreate"
       @update="handleUpdate"
@@ -110,7 +112,12 @@ export default {
       dialog: {
         mode: 'update',
         title: '新建角色',
-        visible: false
+        visible: false,
+        class: 'roles-dialog'
+      },
+      table: {
+        data: [],
+        total: 0
       },
       authorize: {
         rbac_node_list: [],
@@ -147,7 +154,7 @@ export default {
     },
     tableData() {
       return {
-        target: 'store.table',
+        target: 'table',
         runner: service.find.bind(service),
         variables: function() {
           return {
@@ -211,8 +218,14 @@ export default {
     },
     handleSearch(payload) {
       // debugger;
-      console.log('search', payload)
-      this.tableData.refresh(payload)
+      // // console.log('search', payload)
+      this.tableData.refresh({
+        ...payload,
+        node_id:
+          payload.node_id && payload.node_id.length
+            ? payload.node_id[payload.node_id.length - 1]
+            : '0'
+      })
     },
     handleSubmit({ validate, data, mode }) {
       validate(valid => {
@@ -225,4 +238,16 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.roles-dialog {
+  width: 560px;
+  .data-form {
+    .el-input__inner {
+      width: 250px;
+    }
+    .el-form-item__label {
+      width: 80px;
+    }
+  }
+}
+</style>

@@ -1,5 +1,5 @@
 import { deleteChildren } from '@/utils'
-import { organizationService, dicmanageService } from './service'
+import { organizationService, roleService } from './service'
 let node_id = []
 export default {
   schema: [
@@ -9,7 +9,7 @@ export default {
       prop: 'node_id',
       use: 'base-cascader',
       size: 'small',
-      update: false,
+      update: true,
       create: true,
       forms: {
         label: '所属单位',
@@ -44,89 +44,92 @@ export default {
       }
     },
     {
-      prop: 'r_id',
-      label: '角色编号',
-      width: '100'
-    },
-    {
-      label: '角色名称',
+      label: '姓名',
       prop: 'name',
-      width: '300',
+      width: '150',
       forms: {
         use: 'input',
         type: 'input',
-        placeholder: '卫健局',
+        placeholder: '请输入内容',
         size: 'small',
         default: '',
         update: true,
         create: true,
-        rules: [
-          { required: true, message: '请输入角色名称', trigger: 'change' },
-          { required: true, message: '请输入角色名称', trigger: 'blur' }
-        ],
-        required: true
-      }
-    },
-    {
-      isHide: () => true,
-      label: '用户成员',
-      prop: 'admin_arr',
-      forms: {
-        use: 'import',
         required: true,
-        props: {
-          value: 'user_id',
-          label: 'name'
-        },
-        rules: [
-          { required: true, message: '请添加用户成员', trigger: 'change' }
-        ],
-        multiple: true,
-        size: 'small'
+        rules: [{ required: true, message: '请输入姓名', trigger: 'blur' }]
       }
     },
     {
-      isHide: () => true,
-      label: '发布账号',
-      prop: 'pub_id',
+      label: '手机号',
+      prop: 'phone',
       forms: {
-        use: 'select',
-        placeholder: '卫健局',
+        use: 'input',
+        type: 'input',
+        placeholder: '请输入内容',
         size: 'small',
-        'allow-create': true,
-        async: true,
+        required: true,
         update: true,
         create: true,
-        filterable: true,
+        rules: [{ required: true, message: '请输入手机号', trigger: 'blur' }]
+      }
+    },
+    {
+      isHide: () => true,
+      label: '所属角色',
+      prop: 'r_id',
+      forms: {
+        size: 'small',
+        style: 'width: 598px;min-height:50px',
+        class: 'radio-border-group',
+        use: 'radio-group',
+        update: true,
+        create: true,
         children: {
-          use: 'option',
+          use: 'radio',
           options: {
-            runner: dicmanageService.gettabtypedata.bind(dicmanageService),
+            runner: roleService.find.bind(roleService),
             variables: {
-              c_id: 5
+              type: localStorage.getItem('selectedTab'),
+              // 修复bug
+              node_id: '0'
             },
             immediate: true,
-            callback: data =>
-              deleteChildren(data.list).map(item => {
-                // debugger
+            default: [],
+            callback: data => {
+              return data.list.map(item => {
                 return {
                   label: item.name,
-                  value: item.node_id
+                  value: item.r_id
                 }
               })
+            }
           }
         }
       }
     },
     {
-      prop: 'describe',
-      label: '角色描述',
+      prop: 'remark',
+      label: '备注',
       forms: {
-        use: 'input',
-        placeholder: '请输入内容',
-        size: 'small',
         update: true,
-        create: true
+        create: true,
+        use: 'input',
+        type: 'textarea',
+        placeholder: '请输入内容',
+        style: 'width: 400px',
+        size: 'small'
+      }
+    },
+    {
+      prop: 'status',
+      label: '状态',
+      formatter: row => {
+        switch (row.status) {
+          case 'allow':
+            return '在用'
+          case 'ban':
+            return '禁用'
+        }
       }
     }
   ],
@@ -164,17 +167,17 @@ export default {
   searcher: {
     forms: [
       {
-        label: '角色搜索',
+        label: '用户搜索',
         prop: 'title',
         use: 'search',
-        placeholder: '根据角色名称、编号搜索',
+        placeholder: '根据用户名称、编号搜索',
         size: 'small',
         order: 2
       }
     ],
     filter: false,
     searcher: false,
-    create: '新建角色',
+    create: '新建用户',
     data: {
       node_id: 0
     },

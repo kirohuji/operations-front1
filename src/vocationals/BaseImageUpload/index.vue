@@ -30,15 +30,15 @@
         </el-upload>
         <div style="font-size: 14px;color: #606266;">（图片上传尺寸750px*422px）</div>
       </div>
-      <el-radio-group v-if="$attrs.assert" v-model="imageList" @change="handleImageList">
+      <el-radio-group v-if="assert" v-model="imageList" @change="handleImageList">
         <el-radio v-for="n in 3" :key="n" :label="n" class="image-radio">
-          <el-image style="width: 200px; height: 112px" :src="require(`../../assets/${$attrs.assert}/${n}.png`)" />
+          <el-image style="width: 200px; height: 112px" :src="require(`../../assets/${assert}/${n}.png`)" />
           <div style="font-size: 14px;color: #606266;margin-top:8px">系统封面{{ n }}</div>
         </el-radio>
       </el-radio-group>
     </div>
     <div v-else>
-      <img width="228" height="128" :src="$attrs.value" alt="">
+      <img width="228" height="128" :src="value" alt="">
     </div>
     <el-dialog
       v-loading="loading"
@@ -98,6 +98,7 @@ export default {
   components: {
     VueCropper
   },
+  props: ['assert', 'value'],
   data() {
     return {
       imageList: 0,
@@ -123,9 +124,10 @@ export default {
     size(newVal, oldVal) {
       this.$refs.cropper.changeScale((newVal - oldVal) * 1.5)
     },
-    '$attrs.value': {
+    'value': {
       handler(value) {
-        if (this.fileList.length === 0 && value.length > 0) {
+        // debugger
+        if (this.fileList.length === 0 && value && value.length > 0) {
           this.fileList.push({
             url: value
           })
@@ -138,7 +140,7 @@ export default {
     handleImageList(value) {
       this.handleRemove()
       this.handleUpload({
-        url: require(`../../assets/${this.$attrs.assert}/${value}.png`)
+        url: require(`../../assets/${this.assert}/${value}.png`)
       })
       this.dialogVisible = true
     },
