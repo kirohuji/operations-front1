@@ -11,7 +11,7 @@ export default {
     store: {
       type: Object,
       required: true,
-      default: () => {}
+      default: () => { }
     },
     data: {
       type: Array,
@@ -20,7 +20,7 @@ export default {
     total: Number,
     dialog: {
       type: Object,
-      default: () => {}
+      default: () => { }
     }
   },
   components: {
@@ -37,6 +37,10 @@ export default {
     }
   },
   methods: {
+    getSelection() {
+      this.$refs.dataTable.getAllSelectionData()
+      return this.$refs.dataTable.multipleSelectionAll
+    },
     handleSelect(select) {
       this.currentRecord = select
     }
@@ -78,7 +82,7 @@ export default {
                   <Button
                     class='search-button'
                     type='primary'
-                    size='medium'
+                    size='small'
                     onClick={() => this.$emit('create')}
                   >
                     {this.store.searcher.create || '新建'}
@@ -90,6 +94,7 @@ export default {
         </Card>
         <Card class='main-content-body'>
           <DataTable
+            ref='dataTable'
             {...{
               props: {
                 ...this.store.table,

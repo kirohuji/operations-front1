@@ -110,7 +110,7 @@ export default {
         update: true,
         create: true,
         children: {
-          use: 'radio',
+          use: 'base-radio',
           options: {
             runner: service.getcategorylist.bind(service),
             variables: {},
@@ -118,6 +118,7 @@ export default {
             default: [],
             callback: data => {
               return data.list.map(item => {
+                // debugger
                 return {
                   label: item.name,
                   value: item.node_id
@@ -134,6 +135,7 @@ export default {
         placeholder: '请输入内容字数限制30字内',
         size: 'small',
         maxlength: 30,
+        style: 'width: 350px',
         'show-word-limit': true,
         rules: [
           { required: true, message: '请输入标题', trigger: 'blur' },
@@ -158,6 +160,12 @@ export default {
         label: '编辑',
         prop: 'content',
         use: 'editor'
+      },
+      {
+        label: '对象',
+        prop: 'object_arr',
+        use: 'tag-select',
+        size: 'small'
       }
     ],
     layout: {
@@ -184,6 +192,7 @@ export default {
         async: true,
         isReal: true,
         clearable: true,
+        size: 'small',
         default: [],
         props: {
           value: 'node_id',
@@ -205,8 +214,7 @@ export default {
                 }
               })
           }
-        },
-        size: 'small'
+        }
       },
       {
         label: '状态',
@@ -214,6 +222,7 @@ export default {
         use: 'select',
         clearable: true,
         isReal: true,
+        size: 'small',
         class: 'state',
         children: {
           use: 'option',
@@ -240,6 +249,7 @@ export default {
         clearable: true,
         async: true,
         class: 'state',
+        size: 'small',
         children: {
           use: 'option',
           options: {

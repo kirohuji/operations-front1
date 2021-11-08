@@ -95,7 +95,10 @@ export default {
         },
         callback: function(res) {
           return {
-            data: res
+            data: {
+              user: JSON.parse(localStorage.getItem('user')).publisher,
+              ...res
+            }
           }
         },
         immediate: false

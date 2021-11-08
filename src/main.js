@@ -11,6 +11,8 @@ import BaseCascader from '@/components/molecules/BaseCascader/cascader/src/casca
 import BaseImport from '@/vocationals/BaseImport'
 import BaseImageUpload from '@/vocationals/BaseImageUpload'
 import BaseEditor from '@/components/molecules/BaseEditor'
+import BaseRadio from '@/components/molecules/BaseRadio/index'
+import BaseTagSelect from '@/vocationals/BaseTagSelect'
 import App from './App'
 import store from './store'
 import router from './router'
@@ -27,6 +29,8 @@ Vue.prototype.$baseComponents['base-cascader'] = BaseCascader
 Vue.prototype.$baseComponents['import'] = BaseImport
 Vue.prototype.$baseComponents['image'] = BaseImageUpload
 Vue.prototype.$baseComponents['editor'] = BaseEditor
+Vue.prototype.$baseComponents['base-radio'] = BaseRadio
+Vue.prototype.$baseComponents['tag-select'] = BaseTagSelect
 Vue.use(ThenableProvider)
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
