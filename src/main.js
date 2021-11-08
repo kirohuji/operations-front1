@@ -19,7 +19,7 @@ import router from './router'
 import './icons'
 import './permission'
 import './utils/error-log' // error log
-
+import _ from 'lodash'
 import * as filters from './filters'
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium'
@@ -31,6 +31,25 @@ Vue.prototype.$baseComponents['image'] = BaseImageUpload
 Vue.prototype.$baseComponents['editor'] = BaseEditor
 Vue.prototype.$baseComponents['base-radio'] = BaseRadio
 Vue.prototype.$baseComponents['tag-select'] = BaseTagSelect
+Vue.prototype.$baseComponents['label-select'] = {
+  props: ['value', 'options'],
+  methods: {
+    handleLabelSelect(value, options = []) {
+      return options[_.findIndex(options, o => o.value === value)]?.label
+    }
+  },
+  render() {
+    return (
+      <span
+        {...{
+          props: this.$attrs
+        }}
+      >
+        {this.handleLabelSelect(this.value, this.options)}
+      </span>
+    )
+  }
+}
 Vue.use(ThenableProvider)
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])

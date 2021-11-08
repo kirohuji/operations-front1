@@ -121,6 +121,17 @@ export const constantRoutes = [
           activeMenu: '/information/default'
         },
         hidden: true
+      },
+      {
+        path: 'infomanage/check/:id(\\d+)',
+        component: () => import('@/views/infomanage/check/index.vue'),
+        name: 'infomanage_create',
+        meta: {
+          title: '查看资讯',
+          noCache: true,
+          activeMenu: '/information/default'
+        },
+        hidden: true
       }
     ]
   },

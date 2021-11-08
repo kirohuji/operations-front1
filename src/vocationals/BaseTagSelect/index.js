@@ -10,8 +10,12 @@ export default {
     value: {
       type: Array,
       default: () => []
+    },
+    model: {
+      type: Object
     }
   },
+  inject: ['form'],
   thenable: {
     tableData() {
       return {
@@ -58,6 +62,8 @@ export default {
         runner: service.getmembertagcount.bind(service),
         callback: res => {
           this.isloading = false
+          // 后门代码
+          this.form.data.tag_count = res.count
           return res.count
         },
         immediate: false
