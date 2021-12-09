@@ -31,7 +31,12 @@
           <el-button @click="() => (visible = !visible)">取消</el-button>
           <el-button
             type="primary"
-            @click="() => (visible = !visible)"
+            @click="
+              () => {
+                visible = !visible
+                $emit('save')
+              }
+            "
           >保存</el-button>
         </div>
       </slot>

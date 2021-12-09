@@ -4,8 +4,8 @@
       :key="typeKey"
       :store="store"
       :dialog="dialog"
-      :data="table.data"
-      :total="table.total"
+      :data="store.table.data"
+      :total="store.table.total"
       @submit="handleSubmit"
       @create="handleCreate"
       @update="handleUpdate"
@@ -77,7 +77,7 @@
 import ManagerTable, { Store } from '@/components/template/ManagerTable'
 import DataTree from '@/components/organisms/DataTree'
 import BaseDialog from '@/components/molecules/BaseDialog.vue'
-import schema from './schema'
+import schema, { strToNum2 } from './schema'
 import { service } from './service'
 import selectedTab from '@/mixins/selectedTab'
 const AuthorizeLayout = ({ props: { left, right }, scopedSlots }) => (
@@ -116,26 +116,50 @@ export default {
         class: 'roles-dialog'
       },
       table: {
-        data: [],
-        total: 0
+        /** 表格被选中的数据项要存在这里 */
+        selected: {}
       },
+      /** 授权相关 */
       authorize: {
         rbac_node_list: [],
         member_node_list: [],
         admin_role_info: [[], []]
       },
-      selected: {},
       store: new Store(schema)
     }
   },
   thenable: {
+    roleInfoData() {
+      return {
+        target: 'store.forms.data',
+        runner: service.findOne.bind(service),
+        variables: function() {
+          return {
+            type: this.type
+          }
+        },
+        callback: res => {
+          // debugger
+          return {
+            ...res,
+            admin_arr: res.admin_arr.map(item => {
+              return {
+                value: item.user_id,
+                label: item.name
+              }
+            }),
+            node_id: strToNum2(res.node_id)
+          }
+        },
+        immediate: false
+      }
+    },
     authorizeData() {
       return {
         runner: service.getrbacrole.bind(service),
         variables: () => {
           return {
-            type: this.type,
-            r_id: this.r_id
+            type: this.type
           }
         },
         callback: res => {
@@ -147,14 +171,13 @@ export default {
                 ? [[], []]
                 : JSON.parse(res.admin_role_info)
           }
-          this.$refs.authorizeDialog.open()
         },
         immediate: false
       }
     },
     tableData() {
       return {
-        target: 'table',
+        target: 'store.table',
         runner: service.find.bind(service),
         variables: function() {
           return {
@@ -201,9 +224,19 @@ export default {
           this.$refs.authorizeDialog.close()
         })
     },
+    /**
+     * 打开授权对话框
+     */
     handleAuthorize(row) {
       this.table.selected = row
-      this.authorizeData.refresh()
+      // 加载权限相关的数据
+      this.authorizeData
+        .refresh({
+          r_id: row.r_id
+        })
+        .then(() => {
+          this.$refs.authorizeDialog.open()
+        })
     },
     // 基本功能
     handleCreate() {
@@ -211,20 +244,27 @@ export default {
       this.dialog.title = '新建角色'
       this.dialog.visible = true
     },
-    handleUpdate() {
-      this.dialog.mode = 'update'
-      this.dialog.title = '编辑角色'
-      this.dialog.visible = true
+    handleUpdate(row) {
+      this.roleInfoData
+        .refresh({
+          r_id: row.r_id
+        })
+        .then(() => {
+          this.dialog.title = '编辑角色'
+          this.dialog.visible = true
+        })
+    },
+    /** 处理NodeId数据格式 */
+    handleSearchPayload(payload) {
+      payload.node_id =
+        payload.node_id && payload.node_id.length
+          ? payload.node_id[payload.node_id.length - 1]
+          : 0
+      return payload
     },
     handleSearch(payload) {
-      // debugger;
-      // // console.log('search', payload)
       this.tableData.refresh({
-        ...payload,
-        node_id:
-          payload.node_id && payload.node_id.length
-            ? payload.node_id[payload.node_id.length - 1]
-            : '0'
+        ...this.handleSearchPayload(payload)
       })
     },
     handleSubmit({ validate, data, mode }) {
@@ -233,6 +273,39 @@ export default {
           return
         }
       })
+      /** 格式化数据 */
+      if (data.admin_arr) {
+        data.admin_arr = data.admin_arr.join(',')
+      }
+      if (typeof data.pub_id === 'string') {
+        data.publisher = data.pub_id
+        delete data.pub_id
+      }
+      const payload = this.handleSearchPayload(this.store.searcher.data)
+      switch (mode) {
+        case 'update':
+          service
+            .update({
+              ...data,
+              type: this.type
+            })
+            .then(() => {
+              this.$message.success('编辑成功')
+              this.tableData.refresh(payload)
+            })
+          break
+        case 'insert':
+          service
+            .insert({
+              ...data,
+              type: this.type
+            })
+            .then(() => {
+              this.$message.success('新建成功')
+              this.tableData.refresh(payload)
+            })
+          break
+      }
     }
   }
 }

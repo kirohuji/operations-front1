@@ -1,6 +1,28 @@
 import { deleteChildren } from '@/utils'
 import { organizationService, roleService } from './service'
+import _ from 'lodash'
 let node_id = []
+export const strToNum = function(arr) {
+  if (arr) {
+    if (_.isNumber(arr)) {
+      arr = String(arr)
+    }
+    const n_id = arr.split('/').map(item => Number(item))
+    return n_id[n_id.length - 1]
+  }
+}
+export const strToNum2 = function(arr) {
+  if (arr) {
+    if (_.isNumber(arr)) {
+      arr = String(arr)
+    }
+    const n_id = arr.split('/').map(item => Number(item))
+    return n_id
+  }
+}
+/** 前后端数据格式转换  */
+export const getNodeId = nodeId =>
+  Array.isArray(nodeId) ? nodeId[nodeId.length - 1] : strToNum(nodeId)
 export default {
   schema: [
     {
@@ -13,6 +35,12 @@ export default {
       create: true,
       forms: {
         label: '所属单位',
+        default: function() {
+          if (this.store && this.store.searcher) {
+            const data = this.store.searcher.data
+            return Array.isArray(data.node_id) ? [data.node_id[0]] : 0
+          }
+        },
         required: true
       },
       searcher: {
@@ -32,9 +60,12 @@ export default {
           },
           immediate: true,
           onAfter: function(data) {
-            // debugger
-            this.$emit('input', data.length && [data[0].node_id])
-            // return data.length && [data[0].node_id]
+            // 如果没有默认值，就将返回数据列表中的第一项传到输入值中
+            if (!this.innerValue && !this.$attrs.value) {
+              this.$emit('input', data.length && [data[0].node_id])
+            }
+            // 实时请求
+            this.dispatch('DataSearchForm', 'search')
           },
           callback: data => {
             node_id = deleteChildren(data.list)
@@ -80,28 +111,43 @@ export default {
       forms: {
         size: 'small',
         style: 'width: 598px;min-height:50px',
+        formClass: 'test',
         class: 'radio-border-group',
         use: 'radio-group',
         update: true,
         create: true,
-        children: {
-          use: 'radio',
-          options: {
-            runner: roleService.find.bind(roleService),
-            variables: {
-              type: localStorage.getItem('selectedTab'),
-              // 修复bug
-              node_id: '0'
-            },
-            immediate: true,
-            default: [],
-            callback: data => {
-              return data.list.map(item => {
+        watch: {
+          node_id() {
+            this.isRender = false
+            this.loading = true
+            this.$nextTick(() => {
+              this.isRender = true
+              this.functional()
+              this.$forceUpdate()
+            })
+          }
+        },
+        children: function() {
+          return {
+            use: 'base-radio',
+            options: {
+              runner: roleService.find.bind(roleService),
+              variables: function() {
                 return {
-                  label: item.name,
-                  value: item.r_id
+                  type: localStorage.getItem('selectedTab'),
+                  node_id: getNodeId(this.model.node_id)
                 }
-              })
+              },
+              immediate: true,
+              default: [],
+              callback: data => {
+                return data.list.map(item => {
+                  return {
+                    label: item.name,
+                    value: item.r_id
+                  }
+                })
+              }
             }
           }
         }
@@ -116,7 +162,8 @@ export default {
         use: 'input',
         type: 'textarea',
         placeholder: '请输入内容',
-        style: 'width: 400px',
+        class: 'width-500-textarea',
+        rows: 4,
         size: 'small'
       }
     },
@@ -138,6 +185,7 @@ export default {
       {
         prop: 'operation',
         label: '操作',
+        align: 'center',
         width: '200px'
       }
     ],
@@ -179,7 +227,7 @@ export default {
     searcher: false,
     create: '新建用户',
     data: {
-      node_id: 0
+      // node_id: 0
     },
     layout: {
       use: 'inline'

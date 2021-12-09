@@ -4,8 +4,8 @@
       :key="typeKey"
       :store="store"
       :dialog="dialog"
-      :data="table.data"
-      :total="table.total"
+      :data="store.table.data"
+      :total="store.table.total"
       @submit="handleSubmit"
       @create="handleCreate"
       @update="handleUpdate"
@@ -31,7 +31,7 @@
 
 <script>
 import ManagerTable, { Store } from '@/components/template/ManagerTable'
-import schema from './schema'
+import schema, { strToNum2 } from './schema'
 import { service } from './service'
 import selectedTab from '@/mixins/selectedTab'
 export default {
@@ -48,22 +48,39 @@ export default {
         class: 'users-dialog'
       },
       table: {
-        data: [],
-        total: 0
+        selected: {},
+        current: {}
       },
       authorize: {
         rbac_node_list: [],
         member_node_list: [],
         admin_role_info: [[], []]
       },
-      selected: {},
       store: new Store(schema)
     }
   },
   thenable: {
+    userInfoData() {
+      return {
+        target: 'store.forms.data',
+        runner: service.findOne.bind(service),
+        variables: function() {
+          return {
+            type: this.type
+          }
+        },
+        callback: res => {
+          return {
+            ...res,
+            node_id: strToNum2(res.node_id)
+          }
+        },
+        immediate: false
+      }
+    },
     tableData() {
       return {
-        target: 'table',
+        target: 'store.table',
         runner: service.find.bind(service),
         variables: function() {
           return {
@@ -81,30 +98,90 @@ export default {
     }
   },
   methods: {
-    // 基本功能
     handleCreate() {
       this.dialog.mode = 'create'
       this.dialog.title = '新建用户'
       this.dialog.visible = true
     },
-    handleUpdate() {
-      this.dialog.mode = 'update'
-      this.dialog.title = '编辑用户'
-      this.dialog.visible = true
+    handleUpdate(row) {
+      this.userInfoData
+        .refresh({
+          user_id: row.user_id
+        })
+        .then(() => {
+          this.dialog.title = '编辑用户'
+          this.dialog.visible = true
+        })
     },
     handleSearch(payload) {
       this.tableData.refresh({
-        ...payload,
-        node_id:
-          payload.node_id && payload.node_id.length
-            ? payload.node_id[payload.node_id.length - 1]
-            : '0'
+        ...this.handleSearchPayload(payload)
       })
     },
+    handleRowPayload(payload) {
+      payload.node_id = strToNum2(payload.node_id)
+      return payload
+    },
+    handleSearchPayload(payload) {
+      payload.node_id =
+        payload.node_id && payload.node_id.length
+          ? payload.node_id[payload.node_id.length - 1]
+          : 0
+      return payload
+    },
+    /** 启用还是禁用 */
+    handleTrigger(row) {
+      const payload = this.handleSearchPayload(this.store.searcher.data)
+      service
+        .delin({
+          type: row.status === 'ban' ? 1 : 2,
+          user_id: row.user_id,
+          ...payload
+        })
+        .then(() => {
+          this.$message.success('操作成功')
+          this.tableData.refresh(payload)
+        })
+    },
+    /**
+     * 处理对话框的表单提交：
+     * mode:
+     *  1. update: 编辑
+     *  2. insert: 新增
+     * data: 表单数据
+     */
     handleSubmit({ validate, data, mode }) {
       validate(valid => {
         if (!valid) {
           return
+        }
+        /** 格式化收到的数据 */
+        data = this.handleSearchPayload(data)
+        /** 格式化搜索栏 */
+        const payload = this.handleSearchPayload(this.store.searcher.data)
+        switch (mode) {
+          case 'update':
+            service
+              .update({
+                ...data,
+                type: this.type
+              })
+              .then(() => {
+                this.$message.success('编辑成功')
+                this.tableData.refresh(payload)
+              })
+            break
+          case 'insert':
+            service
+              .insert({
+                ...data,
+                type: this.type
+              })
+              .then(() => {
+                this.$message.success('新建成功')
+                this.tableData.refresh(payload)
+              })
+            break
         }
       })
     }

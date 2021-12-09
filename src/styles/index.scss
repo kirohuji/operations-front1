@@ -205,8 +205,9 @@ aside {
   border-color: $menuActiveText !important;
 }
 
+/** 有边框的单选框 样式 **/
 .radio-border-group {
-  padding: 16px 0px 0 16px;
+  padding: 8px 0px 0 16px;
   border: 1px solid #b6c8d5;
   border-radius: 4px;
   width: 400px;
@@ -216,8 +217,18 @@ aside {
     width: 115px;
     margin-bottom: 15px;
   }
+  .thenable-loading {
+    margin-top: 23px;
+    .el-loading-spinner .circular {
+      height: 27px;
+      width: 27px;
+    }
+  }
 }
-
+.width-500-textarea {
+  min-width: 500px;
+}
+.remark-
 .el-input--small .el-input__inner {
   padding-right: 0px;
 }

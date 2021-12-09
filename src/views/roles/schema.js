@@ -1,6 +1,25 @@
 import { deleteChildren } from '@/utils'
 import { organizationService, dicmanageService } from './service'
+import _ from 'lodash'
 let node_id = []
+export const strToNum = function(arr) {
+  if (arr) {
+    if (_.isNumber(arr)) {
+      arr = String(arr)
+    }
+    const n_id = arr.split('/').map(item => Number(item))
+    return n_id[n_id.length - 1]
+  }
+}
+export const strToNum2 = function(arr) {
+  if (arr) {
+    if (_.isNumber(arr)) {
+      arr = String(arr)
+    }
+    const n_id = arr.split('/').map(item => Number(item))
+    return n_id
+  }
+}
 export default {
   schema: [
     {
@@ -9,10 +28,16 @@ export default {
       prop: 'node_id',
       use: 'base-cascader',
       size: 'small',
-      update: false,
+      update: true,
       create: true,
       forms: {
         label: '所属单位',
+        default: function() {
+          if (this.store && this.store.searcher) {
+            const data = this.store.searcher.data
+            return Array.isArray(data.node_id) ? [data.node_id[0]] : 0
+          }
+        },
         required: true
       },
       searcher: {
@@ -32,9 +57,12 @@ export default {
           },
           immediate: true,
           onAfter: function(data) {
-            // debugger
-            this.$emit('input', data.length && [data[0].node_id])
-            // return data.length && [data[0].node_id]
+            // 如果没有默认值，就将返回数据列表中的第一项传到输入值中
+            if (!this.innerValue && !this.$attrs.value) {
+              this.$emit('input', data.length && [data[0].node_id])
+            }
+            // 实时请求
+            this.dispatch('DataSearchForm', 'search')
           },
           callback: data => {
             node_id = deleteChildren(data.list)

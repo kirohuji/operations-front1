@@ -31,6 +31,11 @@ export default {
     Button
   },
   mixins: [emitter],
+  provide() {
+    return {
+      store: this.store
+    }
+  },
   data() {
     return {
       currentRecord: null
@@ -58,7 +63,8 @@ export default {
               visible: this.dialog.visible
             },
             on: {
-              'update:visible': val => (this.dialog.visible = val)
+              'update:visible': val => (this.dialog.visible = val),
+              ...this.$listeners
             },
             scopedSlots: {
               title: () => <div class='title'>{this.dialog.title}</div>
