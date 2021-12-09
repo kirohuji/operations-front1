@@ -125,6 +125,13 @@ export default {
       deep: true
     }
   },
+  mounted() {
+    if (Array.isArray(this.value) && this.value.length) {
+      this.$set(this.select, 'current', this.value)
+      this.$set(this.select, 'options', this.value)
+      this.handleCount()
+    }
+  },
   methods: {
     handleSearch(payload) {
       this.tableData.refresh({
@@ -142,6 +149,11 @@ export default {
     },
     /** 底部标签选择事件 */
     selectTag(tag) {
+      this.$set(
+        this.select,
+        'options',
+        _.unionBy(this.select.options, [tag], 'key')
+      )
       this.select.current.push(tag)
     },
     /** 每次切换都需要重新统计人数 */

@@ -7,7 +7,7 @@
       :data="store.table.data"
       :total="store.table.total"
       @search="handleSearch"
-      @create="$router.push(`/information/infomanage/create/${0}`)"
+      @create="$router.push(`/information/news/create/${0}`)"
     >
       <template v-slot:title="{ row }">
         <span style="color:#008DFF">{{ row.title }}</span>
@@ -19,7 +19,7 @@
       </template>
       <template v-slot:operation="{ row }">
         <div style="display: flex;justify-content: space-between;">
-          <router-link :to="`/information/infomanage/edit/${row.i_id}`">
+          <router-link :to="`/information/news/edit/${row.i_id}`">
             <el-link type="primary">编辑</el-link>
           </router-link>
           <el-link
@@ -29,7 +29,7 @@
           >下架</el-link>
           <el-link
             type="primary"
-            @click="$router.push(`/information/infomanage/check/${row.i_id}`)"
+            @click="$router.push(`/information/news/check/${row.i_id}`)"
           >查看</el-link>
           <el-link type="primary" @click="handleCopy(row)">复制</el-link>
           <el-link type="primary" @click="handleDelete(row)">删除</el-link>
@@ -56,10 +56,6 @@ export default {
         title: '新建资讯',
         visible: false,
         class: 'users-dialog'
-      },
-      table: {
-        data: [],
-        total: 0
       },
       authorize: {
         rbac_node_list: [],

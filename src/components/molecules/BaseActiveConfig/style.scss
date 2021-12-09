@@ -1,0 +1,16 @@
+.dia {
+  margin: 4px 8px;
+  width: 60px;
+  .el-input__inner {
+    width: 60px !important;
+  }
+}
+
+.active-config-item:before {
+  content: '*';
+  color: #f56c6c;
+  margin-right: 4px;
+}
+.active-config-items {
+    font-size: 16px;
+}

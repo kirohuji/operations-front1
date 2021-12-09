@@ -13,13 +13,19 @@ export default {
       {
         prop: 'c_name',
         label: '分类',
-        width: '150',
-        'show-overflow-tooltip': true
+        width: '120'
+      },
+      {
+        prop: 'updated_at',
+        label: '起止时间',
+        width: '250',
+        formatter: (row) => {
+          return `${moment(row.s_time * 1000).format('YYYY-MM-DD HH:mm')}-${moment(row.e_time * 1000).format('YYYY-MM-DD HH:mm')}`
+        }
       },
       {
         prop: 'title',
         label: '标题'
-        // width: '250'
       },
       {
         prop: 'status',
@@ -27,41 +33,40 @@ export default {
         width: '100'
       },
       {
-        prop: 'object_arr',
+        prop: 'pub_name',
         label: '目标对象',
         width: '120',
-        formatter: row => {
-          return row.object_arr.map(item => item?.name).join(',')
+        formatter: (row) => {
+          return row.object_arr.map((item) => item?.name).join(',')
         }
       },
       {
         prop: 'tag_read_count',
         label: '已读人数/目标人数',
         width: '150',
-        formatter: row => {
+        formatter: (row) => {
           return `${row.tag_read_count}/${row.tag_count}`
         }
       },
       {
         prop: 'tag_count',
-        label: '阅读率',
+        label: '点击率',
         width: '120',
-        formatter: row => {
+        formatter: (row) => {
           return `${(row.tag_read_count / row.tag_count) * 100}%`
         }
       },
       {
-        prop: 'updated_at',
-        label: '更新时间',
-        width: '150',
-        formatter: row => {
-          return moment(row.updated_at * 1000).format('YYYY-MM-DD HH:mm:ss')
-        }
+        prop: 'join_num',
+        label: '报名人数'
       },
       {
-        prop: 'pub_name',
-        label: '发布主体',
-        width: '120'
+        prop: 'updated_at',
+        label: '更新时间',
+        width: '200',
+        formatter: (row) => {
+          return moment(row.updated_at * 1000).format('YYYY-MM-DD HH:mm:ss')
+        }
       },
       {
         prop: 'admin_name',
@@ -71,7 +76,8 @@ export default {
       {
         prop: 'operation',
         label: '操作',
-        width: '200px'
+        width: '250',
+        fixed: 'right'
       }
     ],
     data: [],
@@ -129,6 +135,25 @@ export default {
         }
       },
       {
+        label: '起止日期',
+        prop: 'date',
+        component: 'date-picker',
+        type: 'datetimerange',
+        required: true,
+        style: 'width: 320px',
+        placeholder: '选择日期',
+        'range-separator': '至',
+        'value-format': 'yyyy-MM-dd HH:mm',
+        format: 'yyyy-MM-dd HH:mm',
+        'start-placeholder': '开始日期',
+        'end-placeholder': '结束日期',
+        size: 'small',
+        rules: [
+          { required: true, message: '请输入起止日期', trigger: 'blur' },
+          { required: true, message: '请输入起止日期', trigger: 'change' }
+        ]
+      },
+      {
         label: '标题',
         prop: 'title',
         use: 'input',
@@ -140,6 +165,20 @@ export default {
         rules: [
           { required: true, message: '请输入标题', trigger: 'blur' },
           { required: true, message: '请输入标题', trigger: 'change' }
+        ],
+        required: true
+      },
+      {
+        label: '活动地址',
+        prop: 'address',
+        use: 'input',
+        placeholder: '请输入内容数字限制30字内',
+        size: 'small',
+        maxlength: 30,
+        'show-word-limit': true,
+        rules: [
+          { required: true, message: '请输入活动地址', trigger: 'blur' },
+          { required: true, message: '请输入活动地址', trigger: 'change' }
         ],
         required: true
       },
@@ -166,6 +205,27 @@ export default {
         prop: 'object_arr',
         use: 'tag-select',
         size: 'small'
+      },
+      {
+        label: '高级设置',
+        prop: 'adv',
+        use: 'active-config',
+        layout: 'center',
+        default: [],
+        options: [
+          {
+            label: '支持报名',
+            value: 1
+          },
+          {
+            label: '短信通知',
+            value: 2
+          },
+          {
+            label: '活动类型',
+            value: 3
+          }
+        ]
       }
     ],
     layout: {
@@ -177,18 +237,17 @@ export default {
   searcher: {
     forms: [
       {
-        label: '资讯搜索',
+        label: '活动搜索',
         prop: 'title',
         use: 'search',
         placeholder: '根据标题名称、编号搜索',
-        size: 'small',
-        order: 2
+        size: 'small'
       },
       {
-        label: '资讯分类',
+        label: '活动分类',
         prop: 'type',
         use: 'select',
-        placeholder: '请选择资讯分类',
+        placeholder: '请选择活动分类',
         async: true,
         real: true,
         clearable: true,
@@ -243,45 +302,23 @@ export default {
         }
       },
       {
-        label: '发布主体',
-        prop: 'pub_id',
-        use: 'select',
-        clearable: true,
-        async: true,
-        class: 'state',
-        size: 'small',
-        children: {
-          use: 'option',
-          options: {
-            runner: service.getpublist.bind(service),
-            variables: {},
-            immediate: true,
-            default: [],
-            callback: data =>
-              data.list.map(item => {
-                return {
-                  label: item.name,
-                  value: item.node_id
-                }
-              })
-          }
-        }
-      },
-      {
         label: '日期',
         prop: 'date',
         use: 'date-picker',
-        type: 'date',
+        type: 'daterange',
         real: true,
         placeholder: '选择日期',
+        'range-separator': '至',
         'value-format': 'yyyy-MM-dd',
         format: 'yyyy-MM-dd',
+        'start-placeholder': '开始日期',
+        'end-placeholder': '结束日期',
         size: 'small'
       }
     ],
     filter: false,
     searcher: false,
-    create: '新建资讯',
+    create: '新建活动',
     data: {
       node_id: 0
     },

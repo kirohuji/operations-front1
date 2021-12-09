@@ -18,7 +18,7 @@ export default {
       },
       {
         prop: 'title',
-        label: '标题'
+        label: '标题名称'
         // width: '250'
       },
       {
@@ -177,15 +177,14 @@ export default {
   searcher: {
     forms: [
       {
-        label: '资讯搜索',
+        label: '宣教搜索',
         prop: 'title',
         use: 'search',
         placeholder: '根据标题名称、编号搜索',
-        size: 'small',
-        order: 2
+        size: 'small'
       },
       {
-        label: '资讯分类',
+        label: '宣教分类',
         prop: 'type',
         use: 'select',
         placeholder: '请选择资讯分类',
@@ -243,31 +242,6 @@ export default {
         }
       },
       {
-        label: '发布主体',
-        prop: 'pub_id',
-        use: 'select',
-        clearable: true,
-        async: true,
-        class: 'state',
-        size: 'small',
-        children: {
-          use: 'option',
-          options: {
-            runner: service.getpublist.bind(service),
-            variables: {},
-            immediate: true,
-            default: [],
-            callback: data =>
-              data.list.map(item => {
-                return {
-                  label: item.name,
-                  value: item.node_id
-                }
-              })
-          }
-        }
-      },
-      {
         label: '日期',
         prop: 'date',
         use: 'date-picker',
@@ -281,7 +255,7 @@ export default {
     ],
     filter: false,
     searcher: false,
-    create: '新建资讯',
+    create: '新建宣教',
     data: {
       node_id: 0
     },

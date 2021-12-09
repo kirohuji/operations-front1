@@ -52,6 +52,8 @@ export default {
   created() {
     this.currentId = this.$route.params && this.$route.params.id
     if (Number(this.currentId) !== 0) {
+      // 目前的一个bug，初始化的data一定要null
+      // this.form.data = null
       this.formDataFetch
         .refresh({
           i_id: Number(this.currentId)

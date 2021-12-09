@@ -52,6 +52,8 @@ export default {
   created() {
     this.currentId = this.$route.params && this.$route.params.id
     if (Number(this.currentId) !== 0) {
+      // 目前的一个bug，初始化的data一定要null
+      // this.form.data = null
       this.formDataFetch
         .refresh({
           i_id: Number(this.currentId)
@@ -110,7 +112,13 @@ export default {
           return {
             data: {
               user: JSON.parse(localStorage.getItem('user')).publisher,
-              ...res
+              ...res,
+              date: [new Date(res.s_time * 1000), new Date(res.e_time * 1000)],
+              adv: [
+                res.can_join === 1 && '支持报名',
+                res.is_sms === 1 && '短信通知',
+                res.activity_info && '活动类型'
+              ]
             }
           }
         },

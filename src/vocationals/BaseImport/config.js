@@ -19,7 +19,7 @@ export default {
         prop: 'node_id',
         component: 'cascader',
         size: 'small',
-        isReal: true,
+        real: true,
         async: true,
         disabled: true,
         default: function() {

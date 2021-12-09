@@ -1,11 +1,6 @@
 <template>
   <div style="padding-bottom: 41px;padding-top:24px;padding-left:30px">
-    <DataForm
-      ref="dataForm"
-      :key="formKey"
-      v-loading="formDataFetch.loading"
-      v-bind="form"
-    />
+    <DataForm ref="dataForm" v-bind="form" />
     <div style="display: flex;justify-content: center;">
       <el-button @click="$router.go(-1)">取消</el-button>
       <el-button @click="save(0)">存为草稿</el-button>
@@ -16,7 +11,7 @@
 
 <script>
 import { DataForm } from 'lourd-components'
-import config from '../schema'
+import config from './schema'
 import { service } from '../service'
 export default {
   inject: ['layout'],
@@ -30,7 +25,6 @@ export default {
   },
   data() {
     return {
-      formKey: 1,
       form: {
         forms: config.forms.forms,
         data: {},
@@ -44,21 +38,10 @@ export default {
       currentId: null
     }
   },
-  computed: {
-    type() {
-      return this.$store.getters.selectedTab
-    }
-  },
   created() {
     this.currentId = this.$route.params && this.$route.params.id
     if (Number(this.currentId) !== 0) {
-      this.formDataFetch
-        .refresh({
-          i_id: Number(this.currentId)
-        })
-        .then(() => {
-          this.formKey++
-        })
+      this.formDataFetch.refresh()
     }
   },
   methods: {
@@ -105,8 +88,12 @@ export default {
       return {
         target: 'form',
         runner: service.findOne.bind(service),
+        variables: function() {
+          return {
+            i_id: this.currentId
+          }
+        },
         callback: function(res) {
-          console.log(res.object_arr)
           return {
             data: {
               user: JSON.parse(localStorage.getItem('user')).publisher,

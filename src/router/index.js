@@ -90,6 +90,7 @@ export const constantRoutes = [
         path: '/',
         redirect: 'infomanage'
       },
+      /** 咨询管理 */
       {
         path: 'infomanage',
         component: () => import('@/views/infomanage/index'),
@@ -131,6 +132,118 @@ export const constantRoutes = [
           noCache: true,
           activeMenu: '/information/default'
         },
+        hidden: true
+      },
+      /** 宣教管理 */
+      {
+        path: 'prpgd_edu',
+        component: () => import('@/views/prpgd_edu/index'),
+        name: 'prpgd_edu',
+        meta: { title: '宣教管理', affix: false, code: 'prpgd_edu' }
+      },
+      {
+        path: 'prpgd_edu/create/:id(\\d+)',
+        component: () => import('@/views/prpgd_edu/form'),
+        name: 'prpgd_edu_create',
+        meta: {
+          title: '新建宣教',
+          noCache: true,
+          activeMenu: '/prpgd_edu/default'
+        },
+        hidden: true
+      },
+      {
+        path: 'prpgd_edu/edit/:id(\\d+)',
+        component: () => import('@/views/prpgd_edu/form'),
+        name: 'prpgd_edu_create',
+        meta: {
+          title: '编辑宣教',
+          noCache: true,
+          activeMenu: '/prpgd_edu/default'
+        },
+        hidden: true
+      },
+      {
+        path: 'prpgd_edu/check/:id(\\d+)',
+        component: () => import('@/views/prpgd_edu/check'),
+        name: 'prpgd_edu_create',
+        meta: {
+          title: '查看宣教',
+          noCache: true,
+          activeMenu: '/prpgd_edu/default'
+        },
+        hidden: true
+      },
+      /**
+       *  活动管理
+       */
+      {
+        path: 'active',
+        component: () => import('@/views/active/index'),
+        name: 'active',
+        meta: { title: '活动管理', affix: false, code: 'active' }
+      },
+      {
+        path: 'active/create/:id(\\d+)',
+        component: () => import('@/views/active/form'),
+        name: 'active_create',
+        meta: {
+          title: '新建活动',
+          noCache: true,
+          activeMenu: '/active/default'
+        },
+        hidden: true
+      },
+      {
+        path: 'active/edit/:id(\\d+)',
+        component: () => import('@/views/active/form'),
+        name: 'active_create',
+        meta: {
+          title: '编辑活动',
+          noCache: true,
+          activeMenu: '/active/default'
+        },
+        hidden: true
+      },
+      {
+        path: 'active/check/:id(\\d+)',
+        component: () => import('@/views/active/check'),
+        name: 'active_create',
+        meta: {
+          title: '查看活动',
+          noCache: true,
+          activeMenu: '/active/default'
+        },
+        hidden: true
+      },
+      /**
+       *  消息管理
+       */
+      {
+        path: 'news',
+        component: () => import('@/views/news/index'),
+        name: 'news',
+        meta: { title: '消息管理', affix: false, code: 'news' }
+      },
+      {
+        path: 'news/edit/:id(\\d+)',
+        component: () => import('@/views/news/form'),
+        name: 'news_create',
+        meta: { title: '编辑消息', noCache: true, activeMenu: '/news/default' },
+        hidden: true
+      },
+      {
+        path: 'news/create/:id(\\d+)',
+        component: () => import('@/views/news/form'),
+        name: 'news_create',
+        meta: { title: '新建消息', noCache: true, activeMenu: '/news/default' },
+        hidden: true
+      },
+      {
+        path: 'news/check/:id(\\d+)',
+        component: () => import('@/views/news/check'),
+        name: 'active_create',
+        meta: { title: '查看消息', noCache: true, activeMenu: '/news/default' },
         hidden: true
       }
     ]

@@ -12,6 +12,7 @@ import BaseImport from '@/vocationals/BaseImport'
 import BaseImageUpload from '@/vocationals/BaseImageUpload'
 import BaseEditor from '@/components/molecules/BaseEditor'
 import BaseRadio from '@/components/molecules/BaseRadio/index'
+import BaseActiveConfig from '@/components/molecules/BaseActiveConfig/index'
 import BaseTagSelect from '@/vocationals/BaseTagSelect'
 import App from './App'
 import store from './store'
@@ -31,6 +32,7 @@ Vue.prototype.$baseComponents['image'] = BaseImageUpload
 Vue.prototype.$baseComponents['editor'] = BaseEditor
 Vue.prototype.$baseComponents['base-radio'] = BaseRadio
 Vue.prototype.$baseComponents['tag-select'] = BaseTagSelect
+Vue.prototype.$baseComponents['active-config'] = BaseActiveConfig
 Vue.prototype.$baseComponents['label-select'] = {
   props: ['value', 'options'],
   methods: {
