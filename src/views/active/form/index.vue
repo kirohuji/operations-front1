@@ -71,6 +71,9 @@ export default {
         service
           .update({
             ...this.form.data,
+            ...this.form.data.adv.activity_type,
+            s_time: this.form.data.date && this.form.data.date[0],
+            e_time: this.form.data.date && this.form.data.date[1],
             tag: this.form.data.object_arr.map(item => item.key).join(','),
             types: this.type,
             status
@@ -87,6 +90,9 @@ export default {
         service
           .insert({
             ...this.form.data,
+            ...this.form.data.adv.activity_type,
+            s_time: this.form.data.date && this.form.data.date[0],
+            e_time: this.form.data.date && this.form.data.date[1],
             tag: this.form.data.object_arr.map(item => item.key).join(','),
             types: this.type,
             status
@@ -108,17 +114,29 @@ export default {
         target: 'form',
         runner: service.findOne.bind(service),
         callback: function(res) {
-          console.log(res.object_arr)
+          let adv = {
+            value: 0
+          }
+          if (res.can_join === 1 && '支持报名') {
+            adv = {
+              value: 1
+            }
+          } else if (res.is_sms === 1 && '短信通知') {
+            adv = {
+              value: 2
+            }
+          } else if (res.activity_info && '活动类型') {
+            adv = {
+              value: 3,
+              activity_type: res.activity_info
+            }
+          }
           return {
             data: {
               user: JSON.parse(localStorage.getItem('user')).publisher,
               ...res,
               date: [new Date(res.s_time * 1000), new Date(res.e_time * 1000)],
-              adv: [
-                res.can_join === 1 && '支持报名',
-                res.is_sms === 1 && '短信通知',
-                res.activity_info && '活动类型'
-              ]
+              adv: adv
             }
           }
         },

@@ -35,4 +35,17 @@ export class ActiveService extends Service {
   getJoinList(target) {
     return this.api.post(`${this.module}/getJoinList`, target)
   }
+  getHealthyActive(target) {
+    return this.api.post(`${this.module}/getHealthyActive`, target)
+  }
+  getQRCode(target) {
+    return this.api.get(`${this.module}/getQRCode`, {
+      params: target
+    })
+  }
+  activityQRCode(target) {
+    return this.api.get(`${this.module}/activityQRCode`, {
+      params: target
+    })
+  }
 }

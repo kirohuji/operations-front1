@@ -46,6 +46,16 @@ export default {
         }
       },
       {
+        label: '起止时间',
+        prop: 'date',
+        use: 'label',
+        placeholder: '请输入内容字数限制30字内',
+        size: 'small',
+        style: 'color: #5A5E66;margin: 0px 10px;margin-top: 5px;line-height: 20px',
+        maxlength: 30,
+        'show-word-limit': true
+      },
+      {
         label: '标题',
         prop: 'title',
         use: 'label',
@@ -53,6 +63,17 @@ export default {
         size: 'small',
         style:
           'color: #5A5E66;margin: 0px 10px;margin-top: 5px;line-height: 20px',
+        maxlength: 30,
+        'show-word-limit': true
+        // required: true
+      },
+      {
+        label: '活动地点',
+        prop: 'address',
+        use: 'label',
+        placeholder: '请输入内容字数限制30字内',
+        size: 'small',
+        style: 'color: #5A5E66;margin: 0px 10px;margin-top: 5px;line-height: 20px',
         maxlength: 30,
         'show-word-limit': true
         // required: true

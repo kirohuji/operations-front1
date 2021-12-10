@@ -137,7 +137,7 @@ export default {
       {
         label: '起止日期',
         prop: 'date',
-        component: 'date-picker',
+        use: 'date-picker',
         type: 'datetimerange',
         required: true,
         style: 'width: 320px',

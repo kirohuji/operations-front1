@@ -129,6 +129,7 @@ export default {
     if (Array.isArray(this.value) && this.value.length) {
       this.$set(this.select, 'current', this.value)
       this.$set(this.select, 'options', this.value)
+      this.$emit('input', this.value)
       this.handleCount()
     }
   },

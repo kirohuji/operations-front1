@@ -66,11 +66,6 @@ export default {
       store: new Store(schema)
     }
   },
-  computed: {
-    types() {
-      return this.$store.getters.selectedTab
-    }
-  },
   thenable: {
     tableData() {
       return {
